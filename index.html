@@ -15,6 +15,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 .highlight { color:#FFD700; font-weight:bold; }
 .nav { margin-top:20px; }
 .score { margin-top:10px; font-size:18px; }
+img { width:100%; max-height:250px; object-fit:contain; margin:10px 0; border-radius:12px; }
 </style>
 </head>
 <body>
@@ -24,6 +25,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page1" class="page active">
 <h2>Reads on a Screen</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="reading screen">
 <p id="text1">I am Sam. Sam I am. I like to read.</p>
 <button class="primary" onclick="speak(text1.innerText)">🔊 Hear</button>
 <button class="secondary" onclick="highlightWords()">Highlight</button>
@@ -31,6 +33,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page2" class="page">
 <h2>Sound It Out</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="map">
 <p>m-a-p = ?</p>
 <input id="wordInput" placeholder="Type word">
 <button onclick="checkWord()">Check</button>
@@ -39,6 +42,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page3" class="page">
 <h2>Extra Phonics</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="cat">
 <p>c-a-t = ?</p>
 <input id="wordInput2" placeholder="Type word">
 <button onclick="checkWord2()">Check</button>
@@ -47,6 +51,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page4" class="page">
 <h2>Read Anywhere</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" alt="locations">
 <p>Choose where Sam reads:</p>
 <button onclick="answer('home')">Home</button>
 <button onclick="answer('car')">Car</button>
@@ -56,6 +61,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page5" class="page">
 <h2>Big Word</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/1998/1998610.png" alt="elephant">
 <p>el - e - phant</p>
 <button onclick="checkBigWord('elephant')">Elephant</button>
 <button onclick="checkBigWord('cat')">Cat</button>
@@ -64,6 +70,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page6" class="page">
 <h2>Word Match</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/616/616554.png" alt="dog">
 <p>Which word matches the sound "dog"?</p>
 <button onclick="matchWord('dog')">dog</button>
 <button onclick="matchWord('cat')">cat</button>
@@ -72,6 +79,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <div id="page7" class="page">
 <h2>Final Challenge</h2>
+<img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="cat vs elephant">
 <p>Which is bigger?</p>
 <button onclick="finalAnswer('cat')">Cat</button>
 <button onclick="finalAnswer('elephant')">Elephant</button>
