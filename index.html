@@ -38,6 +38,14 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 </div>
 
 <div id="page3" class="page">
+<h2>Extra Phonics</h2>
+<p>c-a-t = ?</p>
+<input id="wordInput2" placeholder="Type word">
+<button onclick="checkWord2()">Check</button>
+<p id="result2"></p>
+</div>
+
+<div id="page4" class="page">
 <h2>Read Anywhere</h2>
 <p>Choose where Sam reads:</p>
 <button onclick="answer('home')">Home</button>
@@ -46,7 +54,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 <p id="answerResult"></p>
 </div>
 
-<div id="page4" class="page">
+<div id="page5" class="page">
 <h2>Big Word</h2>
 <p>el - e - phant</p>
 <button onclick="checkBigWord('elephant')">Elephant</button>
@@ -54,7 +62,15 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 <p id="bigResult"></p>
 </div>
 
-<div id="page5" class="page">
+<div id="page6" class="page">
+<h2>Word Match</h2>
+<p>Which word matches the sound "dog"?</p>
+<button onclick="matchWord('dog')">dog</button>
+<button onclick="matchWord('cat')">cat</button>
+<p id="matchResult"></p>
+</div>
+
+<div id="page7" class="page">
 <h2>Final Challenge</h2>
 <p>Which is bigger?</p>
 <button onclick="finalAnswer('cat')">Cat</button>
@@ -71,7 +87,7 @@ button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:
 
 <script>
 let currentPage = 1;
-const totalPages = 5;
+const totalPages = 7;
 let score = 0;
 
 function updateScore(points) {
@@ -105,12 +121,14 @@ function highlightWords() {
 
 function checkWord() {
   const val = document.getElementById('wordInput').value.toLowerCase();
-  if(val === 'map') {
-    document.getElementById('result').innerText = '✅ Correct!';
-    updateScore(10);
-  } else {
-    document.getElementById('result').innerText = '❌ Try again';
-  }
+  if(val === 'map') { document.getElementById('result').innerText = '✅ Correct!'; updateScore(10);} 
+  else { document.getElementById('result').innerText = '❌ Try again'; }
+}
+
+function checkWord2() {
+  const val = document.getElementById('wordInput2').value.toLowerCase();
+  if(val === 'cat') { document.getElementById('result2').innerText = '✅ Correct!'; updateScore(10);} 
+  else { document.getElementById('result2').innerText = '❌ Try again'; }
 }
 
 function answer(place) {
@@ -119,30 +137,18 @@ function answer(place) {
 }
 
 function checkBigWord(word) {
-  if(word === 'elephant') {
-    document.getElementById('bigResult').innerText = '🎉 Correct!';
-    updateScore(15);
-  } else {
-    document.getElementById('bigResult').innerText = '❌ Try again';
-  }
+  if(word === 'elephant') { document.getElementById('bigResult').innerText = '🎉 Correct!'; updateScore(15);} 
+  else { document.getElementById('bigResult').innerText = '❌ Try again'; }
+}
+
+function matchWord(word) {
+  if(word === 'dog') { document.getElementById('matchResult').innerText = '✅ Correct!'; updateScore(10);} 
+  else { document.getElementById('matchResult').innerText = '❌ Try again'; }
 }
 
 function finalAnswer(ans) {
-  if(ans === 'elephant') {
-    document.getElementById('finalResult').innerText = '🏆 You are a Sam Reader!';
-    updateScore(20);
-  } else {
-    document.getElementById('finalResult').innerText = 'Try again!';
-  }
-}
-
-// Basic voice recognition (experimental)
-if ('webkitSpeechRecognition' in window) {
-  const recognition = new webkitSpeechRecognition();
-  recognition.continuous = false;
-  recognition.onresult = function(event) {
-    console.log('Voice input:', event.results[0][0].transcript);
-  };
+  if(ans === 'elephant') { document.getElementById('finalResult').innerText = '🏆 You are a Sam Reader!'; updateScore(20);} 
+  else { document.getElementById('finalResult').innerText = 'Try again!'; }
 }
 </script>
 
