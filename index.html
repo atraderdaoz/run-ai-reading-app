@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUN.AI Reading Engine – Sam I Am (Standalone)</title>
+<style>
+body { margin:0; font-family:Arial; background:#0d0f1a; color:#fff; }
+.container { padding:20px; max-width:900px; margin:auto; }
+.page { display:none; }
+.page.active { display:block; }
+button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:pointer; }
+.primary { background:#4CAF50; color:white; }
+.secondary { background:#2196F3; color:white; }
+.highlight { color:#FFD700; font-weight:bold; }
+.nav { margin-top:20px; }
+.score { margin-top:10px; font-size:18px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📘 Sam I Am – AI Reading App</h1>
+<p class="score">Score: <span id="score">0</span></p>
+
+<div id="page1" class="page active">
+<h2>Reads on a Screen</h2>
+<p id="text1">I am Sam. Sam I am. I like to read.</p>
+<button class="primary" onclick="speak(text1.innerText)">🔊 Hear</button>
+<button class="secondary" onclick="highlightWords()">Highlight</button>
+</div>
+
+<div id="page2" class="page">
+<h2>Sound It Out</h2>
+<p>m-a-p = ?</p>
+<input id="wordInput" placeholder="Type word">
+<button onclick="checkWord()">Check</button>
+<p id="result"></p>
+</div>
+
+<div id="page3" class="page">
+<h2>Read Anywhere</h2>
+<p>Choose where Sam reads:</p>
+<button onclick="answer('home')">Home</button>
+<button onclick="answer('car')">Car</button>
+<button onclick="answer('night')">Night</button>
+<p id="answerResult"></p>
+</div>
+
+<div id="page4" class="page">
+<h2>Big Word</h2>
+<p>el - e - phant</p>
+<button onclick="checkBigWord('elephant')">Elephant</button>
+<button onclick="checkBigWord('cat')">Cat</button>
+<p id="bigResult"></p>
+</div>
+
+<div id="page5" class="page">
+<h2>Final Challenge</h2>
+<p>Which is bigger?</p>
+<button onclick="finalAnswer('cat')">Cat</button>
+<button onclick="finalAnswer('elephant')">Elephant</button>
+<p id="finalResult"></p>
+</div>
+
+<div class="nav">
+<button onclick="prevPage()">⬅ Prev</button>
+<button onclick="nextPage()">Next ➡</button>
+</div>
+
+</div>
+
+<script>
+let currentPage = 1;
+const totalPages = 5;
+let score = 0;
+
+function updateScore(points) {
+  score += points;
+  document.getElementById('score').innerText = score;
+}
+
+function showPage(num) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page' + num).classList.add('active');
+}
+
+function nextPage() {
+  if(currentPage < totalPages) currentPage++;
+  showPage(currentPage);
+}
+
+function prevPage() {
+  if(currentPage > 1) currentPage--;
+  showPage(currentPage);
+}
+
+function speak(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(utterance);
+}
+
+function highlightWords() {
+  document.getElementById('text1').innerHTML = "I am <span class='highlight'>Sam</span>. Sam I am.";
+}
+
+function checkWord() {
+  const val = document.getElementById('wordInput').value.toLowerCase();
+  if(val === 'map') {
+    document.getElementById('result').innerText = '✅ Correct!';
+    updateScore(10);
+  } else {
+    document.getElementById('result').innerText = '❌ Try again';
+  }
+}
+
+function answer(place) {
+  document.getElementById('answerResult').innerText = "Nice! " + place;
+  updateScore(5);
+}
+
+function checkBigWord(word) {
+  if(word === 'elephant') {
+    document.getElementById('bigResult').innerText = '🎉 Correct!';
+    updateScore(15);
+  } else {
+    document.getElementById('bigResult').innerText = '❌ Try again';
+  }
+}
+
+function finalAnswer(ans) {
+  if(ans === 'elephant') {
+    document.getElementById('finalResult').innerText = '🏆 You are a Sam Reader!';
+    updateScore(20);
+  } else {
+    document.getElementById('finalResult').innerText = 'Try again!';
+  }
+}
+
+// Basic voice recognition (experimental)
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.continuous = false;
+  recognition.onresult = function(event) {
+    console.log('Voice input:', event.results[0][0].transcript);
+  };
+}
+</script>
+
+</body>
+</html>
