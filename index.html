@@ -3,161 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUN.AI Reading Engine – Sam I Am (Standalone)</title>
+<title>RUN.AI Reading Engine – AI Generator Mode</title>
 <style>
 body { margin:0; font-family:Arial; background:#0d0f1a; color:#fff; }
 .container { padding:20px; max-width:900px; margin:auto; }
-.page { display:none; }
-.page.active { display:block; }
+.card { background:#1a1d2e; padding:20px; border-radius:16px; }
 button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:pointer; }
 .primary { background:#4CAF50; color:white; }
-.secondary { background:#2196F3; color:white; }
-.highlight { color:#FFD700; font-weight:bold; }
-.nav { margin-top:20px; }
-.score { margin-top:10px; font-size:18px; }
-img { width:100%; max-height:250px; object-fit:contain; margin:10px 0; border-radius:12px; }
+img { width:100%; max-height:260px; object-fit:contain; margin:12px 0; border-radius:14px; background:#fff; }
+.score { margin-bottom:10px; }
 </style>
 </head>
 <body>
 <div class="container">
-<h1>📘 Sam I Am – AI Reading App</h1>
+<h1>🧠 Sam I Am – AI Infinite Reading Engine</h1>
 <p class="score">Score: <span id="score">0</span></p>
 
-<div id="page1" class="page active">
-<h2>Reads on a Screen</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="reading screen">
-<p id="text1">I am Sam. Sam I am. I like to read.</p>
-<button class="primary" onclick="speak(text1.innerText)">🔊 Hear</button>
-<button class="secondary" onclick="highlightWords()">Highlight</button>
+<div class="card">
+  <h2 id="question"></h2>
+  <img id="image" src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png">
+  <input id="input" placeholder="Type answer" style="padding:10px;">
+  <br>
+  <button class="primary" onclick="submitAnswer()">Submit</button>
+  <p id="feedback"></p>
 </div>
 
-<div id="page2" class="page">
-<h2>Sound It Out</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="map">
-<p>m-a-p = ?</p>
-<input id="wordInput" placeholder="Type word">
-<button onclick="checkWord()">Check</button>
-<p id="result"></p>
-</div>
-
-<div id="page3" class="page">
-<h2>Extra Phonics</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="cat">
-<p>c-a-t = ?</p>
-<input id="wordInput2" placeholder="Type word">
-<button onclick="checkWord2()">Check</button>
-<p id="result2"></p>
-</div>
-
-<div id="page4" class="page">
-<h2>Read Anywhere</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/854/854878.png" alt="locations">
-<p>Choose where Sam reads:</p>
-<button onclick="answer('home')">Home</button>
-<button onclick="answer('car')">Car</button>
-<button onclick="answer('night')">Night</button>
-<p id="answerResult"></p>
-</div>
-
-<div id="page5" class="page">
-<h2>Big Word</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/1998/1998610.png" alt="elephant">
-<p>el - e - phant</p>
-<button onclick="checkBigWord('elephant')">Elephant</button>
-<button onclick="checkBigWord('cat')">Cat</button>
-<p id="bigResult"></p>
-</div>
-
-<div id="page6" class="page">
-<h2>Word Match</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/616/616554.png" alt="dog">
-<p>Which word matches the sound "dog"?</p>
-<button onclick="matchWord('dog')">dog</button>
-<button onclick="matchWord('cat')">cat</button>
-<p id="matchResult"></p>
-</div>
-
-<div id="page7" class="page">
-<h2>Final Challenge</h2>
-<img src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="cat vs elephant">
-<p>Which is bigger?</p>
-<button onclick="finalAnswer('cat')">Cat</button>
-<button onclick="finalAnswer('elephant')">Elephant</button>
-<p id="finalResult"></p>
-</div>
-
-<div class="nav">
-<button onclick="prevPage()">⬅ Prev</button>
-<button onclick="nextPage()">Next ➡</button>
+<div>
+<button onclick="next()">Next ➡</button>
 </div>
 
 </div>
 
 <script>
-let currentPage = 1;
-const totalPages = 7;
 let score = 0;
+let currentWord = '';
 
-function updateScore(points) {
-  score += points;
+// Word bank (can expand infinitely later)
+const wordBank = [
+  "cat","dog","map","hat","bat","sun","fish","run","book","star",
+  "pen","cup","tree","car","bed","milk","shoe","ball","moon","duck"
+];
+
+function generateQuestion(){
+  currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+  let spaced = currentWord.split('').join('-');
+  document.getElementById('question').innerText = spaced + ' = ?';
+  document.getElementById('input').value = '';
+  document.getElementById('feedback').innerText = '';
+}
+
+function submitAnswer(){
+  let val = document.getElementById('input').value.toLowerCase();
+  if(val === currentWord){
+    score += 10;
+    document.getElementById('feedback').innerText = '✅ Correct!';
+  } else {
+    document.getElementById('feedback').innerText = '❌ Try again (' + currentWord + ')';
+  }
   document.getElementById('score').innerText = score;
 }
 
-function showPage(num) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page' + num).classList.add('active');
+function next(){
+  generateQuestion();
 }
 
-function nextPage() {
-  if(currentPage < totalPages) currentPage++;
-  showPage(currentPage);
-}
-
-function prevPage() {
-  if(currentPage > 1) currentPage--;
-  showPage(currentPage);
-}
-
-function speak(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utterance);
-}
-
-function highlightWords() {
-  document.getElementById('text1').innerHTML = "I am <span class='highlight'>Sam</span>. Sam I am.";
-}
-
-function checkWord() {
-  const val = document.getElementById('wordInput').value.toLowerCase();
-  if(val === 'map') { document.getElementById('result').innerText = '✅ Correct!'; updateScore(10);} 
-  else { document.getElementById('result').innerText = '❌ Try again'; }
-}
-
-function checkWord2() {
-  const val = document.getElementById('wordInput2').value.toLowerCase();
-  if(val === 'cat') { document.getElementById('result2').innerText = '✅ Correct!'; updateScore(10);} 
-  else { document.getElementById('result2').innerText = '❌ Try again'; }
-}
-
-function answer(place) {
-  document.getElementById('answerResult').innerText = "Nice! " + place;
-  updateScore(5);
-}
-
-function checkBigWord(word) {
-  if(word === 'elephant') { document.getElementById('bigResult').innerText = '🎉 Correct!'; updateScore(15);} 
-  else { document.getElementById('bigResult').innerText = '❌ Try again'; }
-}
-
-function matchWord(word) {
-  if(word === 'dog') { document.getElementById('matchResult').innerText = '✅ Correct!'; updateScore(10);} 
-  else { document.getElementById('matchResult').innerText = '❌ Try again'; }
-}
-
-function finalAnswer(ans) {
-  if(ans === 'elephant') { document.getElementById('finalResult').innerText = '🏆 You are a Sam Reader!'; updateScore(20);} 
-  else { document.getElementById('finalResult').innerText = 'Try again!'; }
-}
+// INIT
+generateQuestion();
 </script>
 
 </body>
