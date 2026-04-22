@@ -3,72 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RUN.AI Reading Engine – AI Generator Mode</title>
+<title>RUN.AI Reading Engine – AI Pro</title>
 <style>
-body { margin:0; font-family:Arial; background:#0d0f1a; color:#fff; }
-.container { padding:20px; max-width:900px; margin:auto; }
+body { margin:0; font-family:Arial; background:#0d0f1a; color:white; }
+.container { max-width:900px; margin:auto; padding:20px; }
 .card { background:#1a1d2e; padding:20px; border-radius:16px; }
-button { padding:12px 18px; margin:6px; border:none; border-radius:10px; cursor:pointer; }
+img { width:100%; max-height:260px; object-fit:contain; border-radius:12px; background:white; }
+button { padding:12px; margin:6px; border:none; border-radius:10px; cursor:pointer; }
 .primary { background:#4CAF50; color:white; }
-img { width:100%; max-height:260px; object-fit:contain; margin:12px 0; border-radius:14px; background:#fff; }
 .score { margin-bottom:10px; }
 </style>
 </head>
 <body>
+
 <div class="container">
-<h1>🧠 Sam I Am – AI Infinite Reading Engine</h1>
-<p class="score">Score: <span id="score">0</span></p>
+<h1>🧠 RUN.AI Reading Engine – AI Pro</h1>
+<p class="score">Score: <span id="score">0</span> | Level: <span id="level">easy</span></p>
 
 <div class="card">
-  <h2 id="question"></h2>
-  <img id="image" src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png">
-  <input id="input" placeholder="Type answer" style="padding:10px;">
+  <h2 id="stageTitle"></h2>
+  <img id="image">
+  <p id="question"></p>
+
+  <div id="choices"></div>
+
+  <input id="input" placeholder="Type or speak answer..." style="display:none; padding:10px;">
   <br>
-  <button class="primary" onclick="submitAnswer()">Submit</button>
+
+  <button class="primary" onclick="submit()">Submit</button>
+  <button onclick="startVoice()">🎤 Speak</button>
+
   <p id="feedback"></p>
 </div>
 
-<div>
 <button onclick="next()">Next ➡</button>
 </div>
 
-</div>
-
 <script>
-let score = 0;
-let currentWord = '';
+let score = parseInt(localStorage.getItem('score')) || 0;
+let level = localStorage.getItem('level') || 'easy';
+let index = 0;
+let stage = 0;
 
-// Word bank (can expand infinitely later)
-const wordBank = [
-  "cat","dog","map","hat","bat","sun","fish","run","book","star",
-  "pen","cup","tree","car","bed","milk","shoe","ball","moon","duck"
-];
+const levels = {
+  easy: ["cat","dog","sun","hat","bat"],
+  medium: ["fish","book","tree","ball","cow"],
+  hard: ["elephant","giraffe","dinosaur","computer","airplane"]
+};
 
-function generateQuestion(){
-  currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
-  let spaced = currentWord.split('').join('-');
-  document.getElementById('question').innerText = spaced + ' = ?';
-  document.getElementById('input').value = '';
-  document.getElementById('feedback').innerText = '';
+function getWord(){
+  let arr = levels[level];
+  return arr[Math.floor(Math.random()*arr.length)];
 }
 
-function submitAnswer(){
-  let val = document.getElementById('input').value.toLowerCase();
-  if(val === currentWord){
-    score += 10;
-    document.getElementById('feedback').innerText = '✅ Correct!';
-  } else {
-    document.getElementById('feedback').innerText = '❌ Try again (' + currentWord + ')';
+let currentWord = getWord();
+
+function load(){
+  document.getElementById("score").innerText = score;
+  document.getElementById("level").innerText = level;
+
+  document.getElementById("image").src = "images/"+currentWord+".png";
+  document.getElementById("feedback").innerText = "";
+
+  let choicesDiv = document.getElementById("choices");
+  let input = document.getElementById("input");
+  choicesDiv.innerHTML = "";
+
+  if(stage===0){
+    document.getElementById("stageTitle").innerText = "👀 Look";
+    document.getElementById("question").innerText = "What do you see?";
+    input.style.display="none";
+
+    let options = shuffle([currentWord,...levels.easy].slice(0,3));
+    options.forEach(o=>{
+      let b=document.createElement("button");
+      b.innerText=o;
+      b.onclick=()=>check(o);
+      choicesDiv.appendChild(b);
+    });
   }
-  document.getElementById('score').innerText = score;
+
+  if(stage===1){
+    document.getElementById("stageTitle").innerText = "🧠 Understand";
+    document.getElementById("question").innerText = "Which word matches?";
+    input.style.display="none";
+
+    let options = shuffle([currentWord,...levels.medium].slice(0,3));
+    options.forEach(o=>{
+      let b=document.createElement("button");
+      b.innerText=o;
+      b.onclick=()=>check(o);
+      choicesDiv.appendChild(b);
+    });
+  }
+
+  if(stage===2){
+    document.getElementById("stageTitle").innerText = "🔤 Spell";
+    document.getElementById("question").innerText = currentWord.split('').join('-')+" = ?";
+    input.style.display="block";
+    input.value="";
+  }
+}
+
+function check(ans){
+  if(ans===currentWord){
+    score+=10;
+    document.getElementById("feedback").innerText="✅ Correct";
+  } else {
+    document.getElementById("feedback").innerText="❌ Try again";
+  }
+  saveProgress();
+  updateLevel();
+}
+
+function submit(){
+  if(stage!==2)return;
+  let val=document.getElementById("input").value.toLowerCase();
+  check(val);
 }
 
 function next(){
-  generateQuestion();
+  stage++;
+  if(stage>2){
+    stage=0;
+    currentWord=getWord();
+  }
+  load();
 }
 
-// INIT
-generateQuestion();
+function saveProgress(){
+  localStorage.setItem('score',score);
+  localStorage.setItem('level',level);
+}
+
+function updateLevel(){
+  if(score>100) level='medium';
+  if(score>200) level='hard';
+}
+
+function shuffle(arr){
+  return arr.sort(()=>Math.random()-0.5);
+}
+
+// 🎤 Voice Recognition
+function startVoice(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition){ alert("Voice not supported"); return; }
+
+  const recog = new SpeechRecognition();
+  recog.lang = "en-US";
+
+  recog.onresult = function(e){
+    let speech = e.results[0][0].transcript.toLowerCase();
+    document.getElementById("input").value = speech;
+    check(speech);
+  }
+
+  recog.start();
+}
+
+load();
 </script>
 
 </body>
