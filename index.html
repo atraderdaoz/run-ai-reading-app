@@ -42,6 +42,7 @@ button { padding:12px; margin:6px; border:none; border-radius:10px; cursor:point
 <script>
 let score = parseInt(localStorage.getItem('score')) || 0;
 let level = localStorage.getItem('level') || 'easy';
+let index = 0;
 let stage = 0;
 
 const levels = {
@@ -57,44 +58,15 @@ function getWord(){
 
 let currentWord = getWord();
 
-function loadImage(word){
-  const img = document.getElementById("image");
-
-  // correct relative path for GitHub Pages
-  img.src = "./images/" + word + ".jpeg";
-
-
-}
-
-  //
-
-
-function speak(text){
-  const utter = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utter);
-}
-
-function uniqueOptions(correct, pool){
-  let set = new Set([correct]);
-
-  while(set.size < 3){
-    let rand = pool[Math.floor(Math.random()*pool.length)];
-    set.add(rand);
-  }
-
-  return shuffle([...set]);
-}
-
 function load(){
   document.getElementById("score").innerText = score;
   document.getElementById("level").innerText = level;
 
-  loadImage(currentWord);
+  document.getElementById("image").src = "images/"+currentWord+".png";
   document.getElementById("feedback").innerText = "";
 
   let choicesDiv = document.getElementById("choices");
   let input = document.getElementById("input");
-
   choicesDiv.innerHTML = "";
 
   if(stage===0){
@@ -102,8 +74,7 @@ function load(){
     document.getElementById("question").innerText = "What do you see?";
     input.style.display="none";
 
-    let options = uniqueOptions(currentWord, levels.easy);
-
+    let options = shuffle([currentWord,...levels.easy].slice(0,3));
     options.forEach(o=>{
       let b=document.createElement("button");
       b.innerText=o;
@@ -117,9 +88,7 @@ function load(){
     document.getElementById("question").innerText = "Which word matches?";
     input.style.display="none";
 
-    let pool = [...levels.easy, ...levels.medium];
-    let options = uniqueOptions(currentWord, pool);
-
+    let options = shuffle([currentWord,...levels.medium].slice(0,3));
     options.forEach(o=>{
       let b=document.createElement("button");
       b.innerText=o;
@@ -130,45 +99,35 @@ function load(){
 
   if(stage===2){
     document.getElementById("stageTitle").innerText = "🔤 Spell";
-    document.getElementById("question").innerText =
-      currentWord.split('').join('-') + " = ?";
-    
+    document.getElementById("question").innerText = currentWord.split('').join('-')+" = ?";
     input.style.display="block";
     input.value="";
-
-    // 🔊 speak word for phonics reinforcement
-    speak(currentWord);
   }
 }
 
 function check(ans){
   if(ans===currentWord){
     score+=10;
-    document.getElementById("feedback").innerText="✅ Correct!";
+    document.getElementById("feedback").innerText="✅ Correct";
   } else {
     document.getElementById("feedback").innerText="❌ Try again";
   }
-
-  updateLevel();
   saveProgress();
-  load(); // refresh UI immediately
+  updateLevel();
 }
 
 function submit(){
-  if(stage!==2) return;
-
-  let val=document.getElementById("input").value.toLowerCase().trim();
+  if(stage!==2)return;
+  let val=document.getElementById("input").value.toLowerCase();
   check(val);
 }
 
 function next(){
   stage++;
-
   if(stage>2){
     stage=0;
     currentWord=getWord();
   }
-
   load();
 }
 
@@ -178,37 +137,24 @@ function saveProgress(){
 }
 
 function updateLevel(){
-  if(score > 200){
-    level = 'hard';
-  } else if(score > 100){
-    level = 'medium';
-  } else {
-    level = 'easy';
-  }
+  if(score>100) level='medium';
+  if(score>200) level='hard';
 }
 
 function shuffle(arr){
   return arr.sort(()=>Math.random()-0.5);
 }
 
-// 🎤 Voice Recognition (only in spelling stage)
+// 🎤 Voice Recognition
 function startVoice(){
-  if(stage !== 2){
-    alert("Go to SPELL stage to use voice 🎤");
-    return;
-  }
-
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SpeechRecognition){ 
-    alert("Voice not supported"); 
-    return; 
-  }
+  if(!SpeechRecognition){ alert("Voice not supported"); return; }
 
   const recog = new SpeechRecognition();
   recog.lang = "en-US";
 
   recog.onresult = function(e){
-    let speech = e.results[0][0].transcript.toLowerCase().trim();
+    let speech = e.results[0][0].transcript.toLowerCase();
     document.getElementById("input").value = speech;
     check(speech);
   }
@@ -218,5 +164,6 @@ function startVoice(){
 
 load();
 </script>
+
 </body>
 </html>
