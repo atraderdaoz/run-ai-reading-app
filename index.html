@@ -60,14 +60,17 @@ let currentWord = getWord();
 function loadImage(word){
   const img = document.getElementById("image");
 
-  // try local first (.jpeg)
-  img.src = "images/" + word + ".jpeg";
+  // correct relative path for GitHub Pages
+  img.src = "./images/" + word + ".jpeg";
 
-  // fallback to online cartoon-style
+  // fallback if missing
   img.onerror = () => {
-    img.src = `https://source.unsplash.com/600x400/?${word},cartoon,illustration,kids`;
+    img.src = `https://source.unsplash.com/600x400/?${word},cartoon,illustration`;
   };
 }
+
+  //
+
 
 function speak(text){
   const utter = new SpeechSynthesisUtterance(text);
