@@ -63,10 +63,7 @@ function loadImage(word){
   // correct relative path for GitHub Pages
   img.src = "./images/" + word + ".jpeg";
 
-  // fallback if missing
-  img.onerror = () => {
-    img.src = `https://source.unsplash.com/600x400/?${word},cartoon,illustration`;
-  };
+
 }
 
   //
