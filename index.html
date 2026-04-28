@@ -57,12 +57,22 @@ function getWord(){
 }
 
 let currentWord = getWord();
+function loadImage(word){
+  const img = document.getElementById("image");
 
+  // Try local image first
+  img.src = "./images/" + word + ".jpeg";
+
+  // If image not found → fallback placeholder (always works)
+  img.onerror = function () {
+    img.src = "https://dummyimage.com/600x400/ffffff/000000&text=" + word;
+  };
+}
 function load(){
   document.getElementById("score").innerText = score;
   document.getElementById("level").innerText = level;
 
- document.getElementById("image").src = "./images/"+currentWord+".jpeg";
+ loadImage(currentWord);
   document.getElementById("feedback").innerText = "";
 
   let choicesDiv = document.getElementById("choices");
