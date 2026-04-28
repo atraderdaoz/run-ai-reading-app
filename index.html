@@ -40,6 +40,7 @@ button { padding:12px; margin:6px; border:none; border-radius:10px; cursor:point
 </div>
 
 <script>
+  let currentQuestion = "";
 let score = parseInt(localStorage.getItem('score')) || 0;
 let level = localStorage.getItem('level') || 'easy';
 let index = 0;
@@ -87,11 +88,16 @@ function load(){
   let input = document.getElementById("input");
   choicesDiv.innerHTML = "";
 
-  if(stage===0){
-    document.getElementById("stageTitle").innerText = "👀 Look";
-    document.getElementById("question").innerText = "What do you see?";
-    speak(q); // 🔊 ADD THIS
-    input.style.display="none";
+ if(stage===0){
+  document.getElementById("stageTitle").innerText = "👀 Look";
+
+  currentQuestion = "What do you see?";
+  document.getElementById("question").innerText = currentQuestion;
+
+  speak(currentQuestion); // 🔊 FIX
+
+  input.style.display="none";
+//}
 
     let options = shuffle([currentWord,...levels.easy].slice(0,3));
     options.forEach(o=>{
@@ -102,13 +108,16 @@ function load(){
     });
   }
 
-  if(stage===1){
-    document.getElementById("stageTitle").innerText = "🧠 Understand";
-    document.getElementById("question").innerText = "Which word matches?";
+ if(stage===1){
+  document.getElementById("stageTitle").innerText = "🧠 Understand";
 
-     speak(q); // 🔊 READ PHONICS
+  currentQuestion = "Which word matches the picture?";
+  document.getElementById("question").innerText = currentQuestion;
 
-    input.style.display="none";
+  speak(currentQuestion); // 🔊 FIX
+
+  input.style.display="none";
+//}
 
     let options = shuffle([currentWord,...levels.medium].slice(0,3));
     options.forEach(o=>{
@@ -119,16 +128,20 @@ function load(){
     });
   }
 
-  if(stage===2){
-    document.getElementById("stageTitle").innerText = "🔤 Spell";
-    document.getElementById("question").innerText = currentWord.split('').join('-')+" = ?";
-    speak(q); // 🔊 READ PHONICS
-    
-    input.style.display="block";
-    input.value="";
-  }
-}
+ if(stage===2){
+  document.getElementById("stageTitle").innerText = "🔤 Spell";
 
+  let spelled = currentWord.split('').join('-');
+
+  currentQuestion = spelled + ". What word is this?";
+  document.getElementById("question").innerText = spelled + " = ?";
+
+  speak(currentQuestion); // 🔊 FIX
+
+  input.style.display="block";
+  input.value="";
+}
+}
 function check(ans){
   if(ans===currentWord){
     score+=10;
@@ -136,7 +149,7 @@ function check(ans){
     speak("Correct! Great job!");
   } else {
     document.getElementById("feedback").innerText="❌ Try again";
-    speak("Try again");
+    speak("Try again. " + currentQuestion); // 🔥 reinforcement
   }
 
   saveProgress();
