@@ -68,6 +68,14 @@ function loadImage(word){
     img.src = "https://dummyimage.com/600x400/ffffff/000000&text=" + word;
   };
 }
+function speak(text){
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.9;     // slower for kids
+  utter.pitch = 1.1;    // friendly tone
+  speechSynthesis.cancel(); // stop overlap
+  speechSynthesis.speak(utter);
+}
+  
 function load(){
   document.getElementById("score").innerText = score;
   document.getElementById("level").innerText = level;
@@ -82,6 +90,7 @@ function load(){
   if(stage===0){
     document.getElementById("stageTitle").innerText = "👀 Look";
     document.getElementById("question").innerText = "What do you see?";
+    speak(q); // 🔊 ADD THIS
     input.style.display="none";
 
     let options = shuffle([currentWord,...levels.easy].slice(0,3));
@@ -96,6 +105,9 @@ function load(){
   if(stage===1){
     document.getElementById("stageTitle").innerText = "🧠 Understand";
     document.getElementById("question").innerText = "Which word matches?";
+
+     speak(q); // 🔊 READ PHONICS
+
     input.style.display="none";
 
     let options = shuffle([currentWord,...levels.medium].slice(0,3));
@@ -110,6 +122,8 @@ function load(){
   if(stage===2){
     document.getElementById("stageTitle").innerText = "🔤 Spell";
     document.getElementById("question").innerText = currentWord.split('').join('-')+" = ?";
+    speak(q); // 🔊 READ PHONICS
+    
     input.style.display="block";
     input.value="";
   }
@@ -118,10 +132,13 @@ function load(){
 function check(ans){
   if(ans===currentWord){
     score+=10;
-    document.getElementById("feedback").innerText="✅ Correct";
+    document.getElementById("feedback").innerText="✅ Correct!";
+    speak("Correct! Great job!");
   } else {
     document.getElementById("feedback").innerText="❌ Try again";
+    speak("Try again");
   }
+
   saveProgress();
   updateLevel();
 }
