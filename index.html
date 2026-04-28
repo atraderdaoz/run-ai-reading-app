@@ -61,7 +61,7 @@ function loadImage(word){
   const img = document.getElementById("image");
 
   // Try local image first
-  img.src = "./images/" + word + ".jpeg";
+  img.src = "./images/" + word + ".jpg";
 
   // If image not found → fallback placeholder (always works)
   img.onerror = function () {
